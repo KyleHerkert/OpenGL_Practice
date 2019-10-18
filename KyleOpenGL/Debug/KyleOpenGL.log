@@ -1,0 +1,10 @@
+﻿  main.cpp
+c:\users\d542\source\repos\kyleopengl\kyleopengl\main.cpp(207): warning C4244: "Initialisierung": Konvertierung von "double" in "float", möglicher Datenverlust
+c:\users\d542\source\repos\kyleopengl\kyleopengl\main.cpp(308): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+c:\users\d542\source\repos\kyleopengl\kyleopengl\main.cpp(309): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+c:\users\d542\source\repos\kyleopengl\kyleopengl\main.cpp(313): warning C4244: "Initialisierung": Konvertierung von "double" in "float", möglicher Datenverlust
+c:\users\d542\source\repos\kyleopengl\kyleopengl\main.cpp(314): warning C4244: "Initialisierung": Konvertierung von "double" in "float", möglicher Datenverlust
+c:\users\d542\source\repos\kyleopengl\kyleopengl\main.cpp(316): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+c:\users\d542\source\repos\kyleopengl\kyleopengl\main.cpp(317): warning C4244: "=": Konvertierung von "double" in "float", möglicher Datenverlust
+c:\users\d542\source\repos\kyleopengl\kyleopengl\main.cpp(326): warning C4244: "Argument": Konvertierung von "double" in "float", möglicher Datenverlust
+  KyleOpenGL.vcxproj -> C:\Users\D542\source\repos\KyleOpenGL\Debug\KyleOpenGL.exe
