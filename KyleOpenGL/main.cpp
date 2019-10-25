@@ -80,23 +80,11 @@ int main()
 	//glEnable(GL_CULL_FACE);
 
 	Shader cubeShader("vertexShader.glsl", "fragmentShader.glsl");
-	Shader triShader("vertexTriangle.glsl", "fragmentTriangle.glsl");
 
 
-	glm::vec3 trianglePosition[] = {
-		glm::vec3(-1.7f, 3.0f, -7.5f)
-	};
-
-
-	//triangle
-	static const GLfloat g_vertexTri_buffer_data[] = {
-		 0.5f,-1.0f,-1.0f,
-		-0.5f,-1.0f, 1.0f,
-		-0.5f, 1.0f, 1.0f,
-	};
 
 	// Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
-// A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
+    // A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
 	static const GLfloat g_vertex_buffer_data[] = {
 		-1.0f,-1.0f,-1.0f, // triangle 1 : begin
 		-1.0f,-1.0f, 1.0f,
@@ -135,7 +123,20 @@ int main()
 		-1.0f, 1.0f, 1.0f,
 		1.0f,-1.0f, 1.0f
 	};
-
+	
+	// world space positions of our cubes
+	glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
 
 	// One color for each vertex. They were generated randomly.
 	static const GLfloat g_color_buffer_data[] = {
@@ -187,16 +188,21 @@ int main()
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
-	GLuint triangleBuffer;
-	glGenBuffers(1, &triangleBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, triangleBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertexTri_buffer_data), g_vertexTri_buffer_data, GL_STATIC_DRAW);
 
 	GLuint colourbuffer;
 	glGenBuffers(1, &colourbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, colourbuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
 
+
+	//the cube
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	//the cubes colours
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, colourbuffer);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 	// render loop
 	// -----------
@@ -223,40 +229,26 @@ int main()
 		cubeShader.use();
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.f);
 		glm::mat4 view = camera.GetViewMatrix();
-		glm::mat4 model = glm::mat4(1.0f);
-		glm::mat4 mvp = projection * view * model;
 		cubeShader.setMat4("projection", projection);
 		cubeShader.setMat4("view", view);
-		cubeShader.setMat4("model", model);
-		cubeShader.setMat4("mvp", mvp);
-
-		//triangle
-		triShader.use();
-		glm::mat4 triprojection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.f);
-		glm::mat4 triview = camera.GetViewMatrix();
-		glm::mat4 trimodel = glm::translate(trimodel, trianglePosition[0]);
-		glm::mat4 trimvp = triprojection * triview * trimodel;
-		triShader.setMat4("triprojection", triprojection);
-		triShader.setMat4("triview", triview);
-		triShader.setMat4("trimodel", trimodel);
-		triShader.setMat4("trimvp", trimvp);
 
 
+		for (unsigned int i = 0; i < 10; i++)
+		{
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, cubePositions[i]);
+			float angle = 20.0f * i * glfwGetTime();
+			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			cubeShader.setMat4("model", model);
+			glm::mat4 mvp = projection * view * model;
+			cubeShader.setMat4("mvp", mvp);
+			glDrawArrays(GL_TRIANGLES, 0, 12 * 3);
+		}
 
 
-		////the cube
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-		glDrawArrays(GL_TRIANGLES, 0, 12 * 3);
-		glDisableVertexAttribArray(0);
 
-		//the cubes colours
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, colourbuffer);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-		
 	
+		
 
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
